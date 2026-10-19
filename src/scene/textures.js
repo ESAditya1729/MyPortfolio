@@ -441,243 +441,46 @@ export function useWallTexture() {
   )
 }
 
-// Stylised sepia portrait of Srinivasa Ramanujan — drawn entirely with
-// canvas 2D primitives so there's no external asset to load or host.
-// Palette: aged-photograph sepia (warm tans, deep browns, cream whites).
-export function useRamanujanTexture() {
+// Small engraved brass museum placard — canvas text rendering is exactly
+// what canvas 2D primitives ARE good at (unlike rendering a human face),
+// so this carries the name/dates/quote that a real photo can't.
+export function useNamePlateTexture(line1, line2, quote) {
   return useMemo(
     () =>
-      makeCanvasTexture(400, 520, (ctx, w, h) => {
-        // ── Background — aged cream paper ──
-        const bg = ctx.createRadialGradient(w / 2, h * 0.45, w * 0.05, w / 2, h * 0.45, w * 0.72)
-        bg.addColorStop(0, '#e8dcc8')
-        bg.addColorStop(0.6, '#d4c4a0')
-        bg.addColorStop(1, '#b8a478')
-        ctx.fillStyle = bg
+      makeCanvasTexture(512, 160, (ctx, w, h) => {
+        const brass = ctx.createLinearGradient(0, 0, 0, h)
+        brass.addColorStop(0, '#8a7340')
+        brass.addColorStop(0.5, '#c9ad68')
+        brass.addColorStop(1, '#7a6434')
+        ctx.fillStyle = brass
         ctx.fillRect(0, 0, w, h)
 
-        // ── Aged paper noise / grain ──
-        for (let i = 0; i < 3000; i++) {
-          ctx.globalAlpha = 0.018 + Math.random() * 0.022
-          ctx.fillStyle = Math.random() > 0.55 ? '#6b4a20' : '#fffae8'
+        for (let i = 0; i < 400; i++) {
+          ctx.globalAlpha = 0.03 + Math.random() * 0.04
+          ctx.fillStyle = Math.random() > 0.5 ? '#fff6dc' : '#3a2e14'
           ctx.fillRect(Math.random() * w, Math.random() * h, 1.2, 1.2)
         }
         ctx.globalAlpha = 1
 
-        // ── Vignette ──
-        const vig = ctx.createRadialGradient(w / 2, h * 0.42, w * 0.22, w / 2, h * 0.42, w * 0.75)
-        vig.addColorStop(0, 'rgba(0,0,0,0)')
-        vig.addColorStop(0.65, 'rgba(0,0,0,0)')
-        vig.addColorStop(1, 'rgba(60,30,0,0.55)')
-        ctx.fillStyle = vig
-        ctx.fillRect(0, 0, w, h)
+        ctx.strokeStyle = 'rgba(40,30,10,0.5)'
+        ctx.lineWidth = 3
+        ctx.strokeRect(4, 4, w - 8, h - 8)
 
-        // helper: sepia tone fill
-        const S = (l) => `hsl(30,${Math.round(30 + l * 0.3)}%,${Math.round(l)}%)`
-
-        // ── Suit / jacket body ──
-        ctx.fillStyle = '#3a2810'
-        ctx.beginPath()
-        ctx.ellipse(w * 0.5, h * 0.88, w * 0.38, h * 0.28, 0, 0, Math.PI * 2)
-        ctx.fill()
-
-        // Jacket lapels
-        ctx.fillStyle = '#2c1e0a'
-        ctx.beginPath()
-        ctx.moveTo(w * 0.5, h * 0.68)
-        ctx.lineTo(w * 0.38, h * 0.76)
-        ctx.lineTo(w * 0.44, h * 0.90)
-        ctx.lineTo(w * 0.5, h * 0.76)
-        ctx.closePath()
-        ctx.fill()
-        ctx.beginPath()
-        ctx.moveTo(w * 0.5, h * 0.68)
-        ctx.lineTo(w * 0.62, h * 0.76)
-        ctx.lineTo(w * 0.56, h * 0.90)
-        ctx.lineTo(w * 0.5, h * 0.76)
-        ctx.closePath()
-        ctx.fill()
-
-        // Shirt / collar
-        ctx.fillStyle = '#e8dcc0'
-        ctx.beginPath()
-        ctx.moveTo(w * 0.44, h * 0.68)
-        ctx.lineTo(w * 0.56, h * 0.68)
-        ctx.lineTo(w * 0.53, h * 0.78)
-        ctx.lineTo(w * 0.47, h * 0.78)
-        ctx.closePath()
-        ctx.fill()
-
-        // Neck
-        ctx.fillStyle = S(50)
-        ctx.beginPath()
-        ctx.ellipse(w * 0.5, h * 0.63, w * 0.065, h * 0.055, 0, 0, Math.PI * 2)
-        ctx.fill()
-
-        // ── Head ──
-        // Head shape — slightly elongated oval
-        ctx.fillStyle = S(52)
-        ctx.beginPath()
-        ctx.ellipse(w * 0.5, h * 0.42, w * 0.195, h * 0.215, 0, 0, Math.PI * 2)
-        ctx.fill()
-
-        // Forehead highlight
-        const fhGrad = ctx.createRadialGradient(w * 0.5, h * 0.30, 0, w * 0.5, h * 0.33, w * 0.14)
-        fhGrad.addColorStop(0, 'rgba(255,240,210,0.35)')
-        fhGrad.addColorStop(1, 'rgba(255,240,210,0)')
-        ctx.fillStyle = fhGrad
-        ctx.beginPath()
-        ctx.ellipse(w * 0.5, h * 0.33, w * 0.14, h * 0.09, 0, 0, Math.PI * 2)
-        ctx.fill()
-
-        // Temple shadow
-        ;[[-1, 0.32], [1, 0.68]].forEach(([side, xp]) => {
-          const tg = ctx.createRadialGradient(w * xp, h * 0.4, 0, w * xp, h * 0.4, w * 0.1)
-          tg.addColorStop(0, 'rgba(60,30,5,0.22)')
-          tg.addColorStop(1, 'rgba(60,30,5,0)')
-          ctx.fillStyle = tg
-          ctx.beginPath()
-          ctx.ellipse(w * xp, h * 0.41, w * 0.1, h * 0.13, 0, 0, Math.PI * 2)
-          ctx.fill()
-        })
-
-        // ── Hair — dense dark mass on top ──
-        ctx.fillStyle = '#1a0e05'
-        ctx.beginPath()
-        ctx.ellipse(w * 0.5, h * 0.265, w * 0.195, h * 0.09, 0, 0, Math.PI * 2)
-        ctx.fill()
-        // Side hair
-        ctx.beginPath()
-        ctx.ellipse(w * 0.315, h * 0.38, w * 0.075, h * 0.11, -0.3, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.beginPath()
-        ctx.ellipse(w * 0.685, h * 0.38, w * 0.075, h * 0.11, 0.3, 0, Math.PI * 2)
-        ctx.fill()
-        // Hair parting line
-        ctx.strokeStyle = '#0d0804'
-        ctx.lineWidth = 1.5
-        ctx.beginPath()
-        ctx.moveTo(w * 0.46, h * 0.22)
-        ctx.quadraticCurveTo(w * 0.51, h * 0.26, w * 0.54, h * 0.3)
-        ctx.stroke()
-
-        // ── Eyebrows ──
-        ctx.strokeStyle = '#2a1808'
-        ctx.lineWidth = 3.5
-        ctx.lineCap = 'round'
-        ;[[0.385, 0.41, 0.435, 0.395], [0.565, 0.395, 0.615, 0.41]].forEach(([x1, y1, x2, y2]) => {
-          ctx.beginPath()
-          ctx.moveTo(w * x1, h * y1)
-          ctx.quadraticCurveTo(w * ((x1 + x2) / 2), h * (Math.min(y1, y2) - 0.01), w * x2, h * y2)
-          ctx.stroke()
-        })
-
-        // ── Eyes ──
-        ;[0.405, 0.595].forEach((ex) => {
-          // Eye white
-          ctx.fillStyle = '#f0e8d5'
-          ctx.beginPath()
-          ctx.ellipse(w * ex, h * 0.445, w * 0.038, h * 0.023, 0, 0, Math.PI * 2)
-          ctx.fill()
-          // Iris
-          ctx.fillStyle = '#1c0e04'
-          ctx.beginPath()
-          ctx.arc(w * ex, h * 0.445, w * 0.022, 0, Math.PI * 2)
-          ctx.fill()
-          // Catchlight
-          ctx.fillStyle = 'rgba(255,250,235,0.65)'
-          ctx.beginPath()
-          ctx.arc(w * ex + w * 0.008, h * 0.44, w * 0.006, 0, Math.PI * 2)
-          ctx.fill()
-          // Eyelid crease
-          ctx.strokeStyle = S(38)
-          ctx.lineWidth = 1.2
-          ctx.beginPath()
-          ctx.ellipse(w * ex, h * 0.445, w * 0.038, h * 0.02, 0, Math.PI, 0)
-          ctx.stroke()
-        })
-
-        // ── Nose ──
-        ctx.strokeStyle = S(42)
-        ctx.lineWidth = 2
-        ctx.lineJoin = 'round'
-        ctx.beginPath()
-        ctx.moveTo(w * 0.488, h * 0.46)
-        ctx.quadraticCurveTo(w * 0.482, h * 0.505, w * 0.468, h * 0.518)
-        ctx.quadraticCurveTo(w * 0.455, h * 0.525, w * 0.458, h * 0.535)
-        ctx.stroke()
-        ctx.beginPath()
-        ctx.moveTo(w * 0.512, h * 0.46)
-        ctx.quadraticCurveTo(w * 0.518, h * 0.505, w * 0.532, h * 0.518)
-        ctx.quadraticCurveTo(w * 0.545, h * 0.525, w * 0.542, h * 0.535)
-        ctx.stroke()
-        // Nostril line
-        ctx.beginPath()
-        ctx.moveTo(w * 0.458, h * 0.535)
-        ctx.quadraticCurveTo(w * 0.5, h * 0.542, w * 0.542, h * 0.535)
-        ctx.stroke()
-
-        // ── Mouth ──
-        ctx.strokeStyle = S(36)
-        ctx.lineWidth = 2.2
-        ctx.beginPath()
-        ctx.moveTo(w * 0.458, h * 0.576)
-        ctx.quadraticCurveTo(w * 0.5, h * 0.585, w * 0.542, h * 0.576)
-        ctx.stroke()
-        // Upper lip bow
-        ctx.beginPath()
-        ctx.moveTo(w * 0.462, h * 0.576)
-        ctx.quadraticCurveTo(w * 0.5, h * 0.568, w * 0.538, h * 0.576)
-        ctx.stroke()
-
-        // ── Ear shadows ──
-        ;[[0.305, 0.445], [0.695, 0.445]].forEach(([ex, ey]) => {
-          ctx.fillStyle = S(43)
-          ctx.beginPath()
-          ctx.ellipse(w * ex, h * ey, w * 0.028, h * 0.042, 0, 0, Math.PI * 2)
-          ctx.fill()
-          ctx.strokeStyle = S(35)
-          ctx.lineWidth = 1
-          ctx.beginPath()
-          ctx.ellipse(w * ex, h * ey, w * 0.018, h * 0.028, 0, 0, Math.PI * 2)
-          ctx.stroke()
-        })
-
-        // ── Lower face shadow / jaw ──
-        const jawGrad = ctx.createLinearGradient(0, h * 0.56, 0, h * 0.64)
-        jawGrad.addColorStop(0, 'rgba(0,0,0,0)')
-        jawGrad.addColorStop(1, 'rgba(40,20,5,0.22)')
-        ctx.fillStyle = jawGrad
-        ctx.beginPath()
-        ctx.ellipse(w * 0.5, h * 0.6, w * 0.18, h * 0.07, 0, 0, Math.PI * 2)
-        ctx.fill()
-
-        // ── Name label ──
-        ctx.fillStyle = '#2c1a08'
-        ctx.font = `bold ${Math.floor(w * 0.065)}px Georgia, serif`
         ctx.textAlign = 'center'
-        ctx.letterSpacing = '0.06em'
-        ctx.fillText('S. Ramanujan', w * 0.5, h * 0.905)
+        ctx.fillStyle = '#2a2008'
+        ctx.font = `bold ${Math.floor(h * 0.24)}px Georgia, serif`
+        ctx.fillText(line1, w / 2, h * 0.36)
 
-        // ── Dates ──
-        ctx.fillStyle = '#5a3a18'
-        ctx.font = `italic ${Math.floor(w * 0.042)}px Georgia, serif`
-        ctx.fillText('1887 — 1920', w * 0.5, h * 0.935)
+        ctx.font = `italic ${Math.floor(h * 0.15)}px Georgia, serif`
+        ctx.fillStyle = '#3a2c10'
+        ctx.fillText(line2, w / 2, h * 0.56)
 
-        // ── Quote ──
-        ctx.fillStyle = '#7a5228'
-        ctx.font = `italic ${Math.floor(w * 0.032)}px Georgia, serif`
-        ctx.fillText('"An equation has no meaning unless', w * 0.5, h * 0.962)
-        ctx.fillText('it expresses a thought of God."', w * 0.5, h * 0.983)
-
-        // ── Decorative border inside the canvas ──
-        ctx.strokeStyle = 'rgba(100,65,20,0.55)'
-        ctx.lineWidth = 4
-        ctx.strokeRect(8, 8, w - 16, h - 16)
-        ctx.strokeStyle = 'rgba(100,65,20,0.25)'
-        ctx.lineWidth = 1.5
-        ctx.strokeRect(14, 14, w - 28, h - 28)
+        if (quote) {
+          ctx.font = `italic ${Math.floor(h * 0.1)}px Georgia, serif`
+          ctx.fillStyle = '#4a3a18'
+          ctx.fillText(quote, w / 2, h * 0.8)
+        }
       }),
-    [],
+    [line1, line2, quote],
   )
 }

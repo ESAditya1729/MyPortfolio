@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // Same spirit as bruno-simon.com's own two-tier quality system (mobile UA
 // check -> level 0/1, broadcast to shadow/bloom/particle settings) — combined
@@ -19,11 +19,9 @@ function detectTier() {
 }
 
 export function useDeviceTier() {
-  const [tier, setTier] = useState('high')
-
-  useEffect(() => {
-    setTier(detectTier())
-  }, [])
-
+  // Lazy initializer runs once on mount — this is a pure CSR app (no SSR/
+  // hydration to worry about), so there's no need for the extra effect+render
+  // pass just to defer a window/navigator read.
+  const [tier] = useState(() => detectTier())
   return tier
 }

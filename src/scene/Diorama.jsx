@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useCityscapeTexture, useFloorTexture, useRamanujanTexture, useRugTexture, useScreenTexture, useWallTexture } from './textures.js'
+import { useTexture } from '@react-three/drei'
+import { useCityscapeTexture, useFloorTexture, useNamePlateTexture, useRugTexture, useScreenTexture, useWallTexture } from './textures.js'
 
 // Animated floating particles above the monitor
 function MonitorGlow() {
@@ -49,7 +50,15 @@ export default function Diorama() {
   const screenTexture = useScreenTexture()
   const wallTexture = useWallTexture()
   const cityscapeTexture = useCityscapeTexture()
-  const ramanujanTexture = useRamanujanTexture()
+  // Real 1919 photograph (public domain) — a human face is exactly the kind
+  // of content canvas-primitive drawing can't render convincingly, unlike
+  // the abstract/patterned textures elsewhere in this scene.
+  const ramanujanTexture = useTexture('/images/ramanujan-portrait.jpg')
+  const namePlateTexture = useNamePlateTexture(
+    'S. Ramanujan',
+    '1887 — 1920',
+    '"An equation has no meaning unless it expresses a thought of God."',
+  )
 
   return (
     <group position={[0, 0, 0]}>
@@ -509,9 +518,9 @@ export default function Diorama() {
         <boxGeometry args={[0.38, 0.52, 0.006]} />
         <meshStandardMaterial color="#d8cba8" roughness={0.9} />
       </mesh>
-      {/* The portrait itself */}
+      {/* The portrait itself — plane aspect matched to the real photo (250x333) */}
       <mesh position={[-0.48, 1.68, -1.278]}>
-        <planeGeometry args={[0.34, 0.47]} />
+        <planeGeometry args={[0.353, 0.47]} />
         <meshStandardMaterial
           map={ramanujanTexture}
           roughness={0.85}
@@ -527,6 +536,11 @@ export default function Diorama() {
         distance={1.2}
         decay={2}
       />
+      {/* Engraved brass name plate beneath the frame */}
+      <mesh position={[-0.48, 1.345, -1.29]}>
+        <planeGeometry args={[0.24, 0.075]} />
+        <meshStandardMaterial map={namePlateTexture} roughness={0.35} metalness={0.6} />
+      </mesh>
 
       {/* ── Second frame — abstract cool (unchanged) ──────────────────────── */}
       <mesh position={[-1.0, 1.58, -1.3]} castShadow>
