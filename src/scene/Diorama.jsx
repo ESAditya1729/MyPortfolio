@@ -313,12 +313,13 @@ export default function Diorama() {
         </mesh>
       ))}
 
-      {/* ── Framed Ramanujan portrait — standing on the desk, not the wall.
+      {/* ── Framed Ramanujan portrait — standing on the desk, beside the
+          lamp, not out front where it competed with keyboard/mouse/mug.
           The wall placement (y=1.68) sat far above every cameraPath target
           (all ~0.55-0.65), so it never actually fell inside any shot. Desk
           height keeps it in the same low band as the monitor/mug/plant,
           which are confirmed visible throughout the whole scroll. ─────── */}
-      <group position={[0.05, 0.4475, 0.28]} rotation={[-0.32, 0, 0]}>
+      <group position={[-0.4, 0.4475, -0.18]} rotation={[-0.32, 0, 0]}>
         {/* Outer wooden frame, pivoted at its bottom edge so it leans back
             like a real standing photo frame resting on the desk */}
         <mesh position={[0, 0.108, 0]} castShadow>
@@ -338,7 +339,7 @@ export default function Diorama() {
       </group>
       {/* Small engraved brass name plate lying flat just in front of the frame —
           legible from the camera's typical elevated, slightly-downward angle */}
-      <mesh position={[0.05, 0.452, 0.315]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh position={[-0.4, 0.452, -0.145]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[0.1, 0.03]} />
         <meshStandardMaterial map={namePlateTexture} roughness={0.35} metalness={0.6} />
       </mesh>
