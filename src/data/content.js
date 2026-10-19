@@ -133,7 +133,7 @@ export const sections = [
     heading: "Let's talk",
     email: 'adityamukherjee1729@gmail.com',
     location: 'India',
-    links: { github: 'https://github.com/ESAditya1729', linkedin: '#' },
+    links: { github: 'https://github.com/ESAditya1729', linkedin: 'https://linkedin.com/in/theadityamukherjee' },
   },
 ]
 
