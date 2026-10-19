@@ -16,8 +16,10 @@ const HOTSPOTS = [
   { id: 'skills', position: [-1.9, 1.04, -0.6], size: [0.3, 0.9, 0.9], ringPos: [-1.75, 1.04, -0.6] },
   // Coffee mug — the casual/personal touch, maps to About
   { id: 'about', position: [-0.5, 0.49, 0.16], size: [0.25, 0.25, 0.25], ringPos: [-0.5, 0.56, 0.16] },
-  // Framed art — "work on display", maps to Projects
-  { id: 'projects', position: [-0.5, 1.65, -1.25], size: [0.5, 0.65, 0.3], ringPos: [-0.5, 1.65, -1.22] },
+  // Framed art — "work on display", maps to Projects. (Targets the
+  // remaining abstract-cool frame — the Ramanujan portrait that used to
+  // hang near here moved down to the desk, see Diorama.jsx.)
+  { id: 'projects', position: [-1.0, 1.58, -1.3], size: [0.45, 0.55, 0.3], ringPos: [-1.0, 1.58, -1.28] },
   // Window — looking outward, maps to Contact
   { id: 'contact', position: [1.1, 1.5, -1.2], size: [1.1, 1.6, 0.4], ringPos: [1.1, 1.5, -1.0] },
 ]

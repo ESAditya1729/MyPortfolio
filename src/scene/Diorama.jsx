@@ -313,6 +313,36 @@ export default function Diorama() {
         </mesh>
       ))}
 
+      {/* ── Framed Ramanujan portrait — standing on the desk, not the wall.
+          The wall placement (y=1.68) sat far above every cameraPath target
+          (all ~0.55-0.65), so it never actually fell inside any shot. Desk
+          height keeps it in the same low band as the monitor/mug/plant,
+          which are confirmed visible throughout the whole scroll. ─────── */}
+      <group position={[0.05, 0.4475, 0.28]} rotation={[-0.32, 0, 0]}>
+        {/* Outer wooden frame, pivoted at its bottom edge so it leans back
+            like a real standing photo frame resting on the desk */}
+        <mesh position={[0, 0.108, 0]} castShadow>
+          <boxGeometry args={[0.17, 0.216, 0.014]} />
+          <meshStandardMaterial color="#3a2008" roughness={0.55} metalness={0.05} />
+        </mesh>
+        {/* Inner mat */}
+        <mesh position={[0, 0.108, 0.0075]}>
+          <boxGeometry args={[0.145, 0.19, 0.005]} />
+          <meshStandardMaterial color="#d8cba8" roughness={0.9} />
+        </mesh>
+        {/* The portrait itself — plane aspect matched to the real photo (250x333) */}
+        <mesh position={[0, 0.108, 0.011]}>
+          <planeGeometry args={[0.125, 0.167]} />
+          <meshStandardMaterial map={ramanujanTexture} roughness={0.85} metalness={0.0} />
+        </mesh>
+      </group>
+      {/* Small engraved brass name plate lying flat just in front of the frame —
+          legible from the camera's typical elevated, slightly-downward angle */}
+      <mesh position={[0.05, 0.452, 0.315]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.1, 0.03]} />
+        <meshStandardMaterial map={namePlateTexture} roughness={0.35} metalness={0.6} />
+      </mesh>
+
       {/* ── Desk lamp ─────────────────────────────────────────────────────── */}
       <group position={[-0.62, 0.42, -0.28]}>
         {/* Base */}
@@ -506,41 +536,6 @@ export default function Diorama() {
           <meshStandardMaterial color={['#37a04a', '#28703a', '#3d8a2a'][i]} roughness={0.6} flatShading />
         </mesh>
       ))}
-
-      {/* ── Framed Ramanujan portrait on back wall ────────────────────────── */}
-      {/* Outer wooden frame — warm dark walnut */}
-      <mesh position={[-0.48, 1.68, -1.295]} castShadow>
-        <boxGeometry args={[0.44, 0.58, 0.018]} />
-        <meshStandardMaterial color="#3a2008" roughness={0.55} metalness={0.05} />
-      </mesh>
-      {/* Inner frame inset — cream mat board */}
-      <mesh position={[-0.48, 1.68, -1.286]}>
-        <boxGeometry args={[0.38, 0.52, 0.006]} />
-        <meshStandardMaterial color="#d8cba8" roughness={0.9} />
-      </mesh>
-      {/* The portrait itself — plane aspect matched to the real photo (250x333) */}
-      <mesh position={[-0.48, 1.68, -1.278]}>
-        <planeGeometry args={[0.353, 0.47]} />
-        <meshStandardMaterial
-          map={ramanujanTexture}
-          roughness={0.85}
-          metalness={0.0}
-        />
-      </mesh>
-      {/* Warm picture-light above the frame — a focused warm cone simulating a
-          gallery spotlight or the brass strip lights often seen above portraits */}
-      <pointLight
-        position={[-0.48, 2.08, -1.08]}
-        intensity={0.65}
-        color="#ffcc88"
-        distance={1.2}
-        decay={2}
-      />
-      {/* Engraved brass name plate beneath the frame */}
-      <mesh position={[-0.48, 1.345, -1.29]}>
-        <planeGeometry args={[0.24, 0.075]} />
-        <meshStandardMaterial map={namePlateTexture} roughness={0.35} metalness={0.6} />
-      </mesh>
 
       {/* ── Second frame — abstract cool (unchanged) ──────────────────────── */}
       <mesh position={[-1.0, 1.58, -1.3]} castShadow>
