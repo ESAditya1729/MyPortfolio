@@ -1,16 +1,21 @@
-export default function Lights() {
+export default function Lights({ tier = 'high' }) {
+  const isLow = tier === 'low'
+
   return (
     <>
       {/* Very dim ambient so the shadow areas read as near-black, not flat */}
       <ambientLight intensity={0.18} color="#1a1e2e" />
 
-      {/* Key light: warm tungsten — simulates the desk lamp spilling onto the scene */}
+      {/* Key light: warm tungsten — simulates the desk lamp spilling onto the scene.
+          Shadow casting + map size scale down on low tier — the Canvas-level
+          `shadows` prop already disables shadow mapping entirely there, this is
+          a second line of defense in case shadows get re-enabled independently. */}
       <directionalLight
         position={[1.8, 3.4, -1.4]}
         intensity={1.6}
         color="#ffd0a0"
-        castShadow
-        shadow-mapSize={[2048, 2048]}
+        castShadow={!isLow}
+        shadow-mapSize={isLow ? [512, 512] : [2048, 2048]}
         shadow-camera-near={0.5}
         shadow-camera-far={12}
         shadow-camera-left={-3.5}

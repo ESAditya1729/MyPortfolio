@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useCityscapeTexture, useFloorTexture, useRugTexture, useScreenTexture, useWallTexture } from './textures.js'
+import { useCityscapeTexture, useFloorTexture, useRamanujanTexture, useRugTexture, useScreenTexture, useWallTexture } from './textures.js'
 
 // Animated floating particles above the monitor
 function MonitorGlow() {
@@ -49,6 +49,7 @@ export default function Diorama() {
   const screenTexture = useScreenTexture()
   const wallTexture = useWallTexture()
   const cityscapeTexture = useCityscapeTexture()
+  const ramanujanTexture = useRamanujanTexture()
 
   return (
     <group position={[0, 0, 0]}>
@@ -120,6 +121,36 @@ export default function Diorama() {
         decay={2}
       />
 
+      {/* Glass specular streak — a soft diagonal highlight sells "glass" far
+          more than a flat textured pane alone; orientation-agnostic (it's
+          decorative, not physically directional) so there's no risk of it
+          reading wrong. */}
+      <mesh position={[1.25, 1.65, -1.255]} rotation={[0, 0, 0.35]}>
+        <planeGeometry args={[0.16, 1.05]} />
+        <meshBasicMaterial
+          color="#ffffff"
+          transparent
+          opacity={0.1}
+          blending={2 /* THREE.AdditiveBlending */}
+          depthWrite={false}
+        />
+      </mesh>
+
+      {/* Soft window-light haze — a low-opacity glow blob rather than a
+          directional beam, so it can't end up pointing the wrong way. Reads
+          as diffused moonlight/city-glow pooling in that corner, especially
+          once Bloom picks it up. */}
+      <mesh position={[0.85, 1.35, -0.85]}>
+        <sphereGeometry args={[0.65, 16, 16]} />
+        <meshBasicMaterial
+          color="#5577cc"
+          transparent
+          opacity={0.05}
+          blending={2 /* THREE.AdditiveBlending */}
+          depthWrite={false}
+        />
+      </mesh>
+
       {/* ── Baseboard / floor trim ────────────────────────────────────────── */}
       <mesh position={[0, -0.01, -1.33]}>
         <boxGeometry args={[5.5, 0.12, 0.05]} />
@@ -134,16 +165,30 @@ export default function Diorama() {
         <meshStandardMaterial color="#141620" roughness={0.6} />
       </mesh>
 
+      {/* ── Ceiling trim — softens the hard seam where walls meet the ceiling ── */}
+      <mesh position={[0, 2.38, -1.33]}>
+        <boxGeometry args={[5.4, 0.06, 0.12]} />
+        <meshStandardMaterial color="#0e0f18" roughness={0.65} />
+      </mesh>
+      <mesh position={[-2.08, 2.38, -0.05]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[2.8, 0.06, 0.12]} />
+        <meshStandardMaterial color="#0e0f18" roughness={0.65} />
+      </mesh>
+      <mesh position={[2.28, 2.38, -0.05]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[2.8, 0.06, 0.12]} />
+        <meshStandardMaterial color="#0e0f18" roughness={0.65} />
+      </mesh>
+
       {/* ── Desk ──────────────────────────────────────────────────────────── */}
       {/* Desk surface */}
       <mesh position={[0, 0.42, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.55, 0.055, 0.75]} />
         <meshStandardMaterial color="#3d2612" roughness={0.45} metalness={0.08} />
       </mesh>
-      {/* Desk surface lip */}
+      {/* Desk surface lip — tiny warm emissive glint so it catches the lamp light */}
       <mesh position={[0, 0.415, 0.38]}>
         <boxGeometry args={[1.55, 0.04, 0.02]} />
-        <meshStandardMaterial color="#2e1c0c" roughness={0.5} />
+        <meshStandardMaterial color="#2e1c0c" roughness={0.5} emissive="#f07340" emissiveIntensity={0.04} />
       </mesh>
       {/* Desk legs */}
       {[-0.65, 0.65].map((x) => (
@@ -237,6 +282,27 @@ export default function Diorama() {
         <circleGeometry args={[0.042, 20]} rotation={[-Math.PI / 2, 0, 0]} />
         <meshStandardMaterial color="#1a0e06" roughness={0.2} />
       </mesh>
+
+      {/* ── Pen holder ────────────────────────────────────────────────────── */}
+      <mesh position={[-0.22, 0.47, 0.17]} castShadow>
+        <cylinderGeometry args={[0.032, 0.03, 0.07, 16]} />
+        <meshStandardMaterial color="#2a2d40" roughness={0.5} metalness={0.15} />
+      </mesh>
+      {[
+        { dx: -0.01, dz: 0.005, rotZ: 0.08, color: '#e8e8ea' },
+        { dx: 0.012, dz: -0.008, rotZ: -0.12, color: '#f07340' },
+        { dx: 0.003, dz: 0.012, rotZ: 0.18, color: '#4ecdbe' },
+      ].map((pen, i) => (
+        <mesh
+          key={i}
+          position={[-0.22 + pen.dx, 0.545, 0.17 + pen.dz]}
+          rotation={[0, 0, pen.rotZ]}
+          castShadow
+        >
+          <cylinderGeometry args={[0.004, 0.004, 0.14, 8]} />
+          <meshStandardMaterial color={pen.color} roughness={0.4} metalness={0.2} />
+        </mesh>
+      ))}
 
       {/* ── Desk lamp ─────────────────────────────────────────────────────── */}
       <group position={[-0.62, 0.42, -0.28]}>
@@ -432,22 +498,37 @@ export default function Diorama() {
         </mesh>
       ))}
 
-      {/* ── Framed art on back wall ────────────────────────────────────────── */}
-      {/* Frame 1 — abstract warm */}
-      <mesh position={[-0.5, 1.65, -1.3]} castShadow>
-        <boxGeometry args={[0.42, 0.55, 0.022]} />
-        <meshStandardMaterial color="#0e1018" roughness={0.4} metalness={0.3} />
+      {/* ── Framed Ramanujan portrait on back wall ────────────────────────── */}
+      {/* Outer wooden frame — warm dark walnut */}
+      <mesh position={[-0.48, 1.68, -1.295]} castShadow>
+        <boxGeometry args={[0.44, 0.58, 0.018]} />
+        <meshStandardMaterial color="#3a2008" roughness={0.55} metalness={0.05} />
       </mesh>
-      <mesh position={[-0.5, 1.65, -1.288]}>
-        <planeGeometry args={[0.34, 0.46]} />
+      {/* Inner frame inset — cream mat board */}
+      <mesh position={[-0.48, 1.68, -1.286]}>
+        <boxGeometry args={[0.38, 0.52, 0.006]} />
+        <meshStandardMaterial color="#d8cba8" roughness={0.9} />
+      </mesh>
+      {/* The portrait itself */}
+      <mesh position={[-0.48, 1.68, -1.278]}>
+        <planeGeometry args={[0.34, 0.47]} />
         <meshStandardMaterial
-          color="#1a0f24"
-          emissive="#ff6b3d"
-          emissiveIntensity={0.12}
-          roughness={0.9}
+          map={ramanujanTexture}
+          roughness={0.85}
+          metalness={0.0}
         />
       </mesh>
-      {/* Frame 2 — abstract cool */}
+      {/* Warm picture-light above the frame — a focused warm cone simulating a
+          gallery spotlight or the brass strip lights often seen above portraits */}
+      <pointLight
+        position={[-0.48, 2.08, -1.08]}
+        intensity={0.65}
+        color="#ffcc88"
+        distance={1.2}
+        decay={2}
+      />
+
+      {/* ── Second frame — abstract cool (unchanged) ──────────────────────── */}
       <mesh position={[-1.0, 1.58, -1.3]} castShadow>
         <boxGeometry args={[0.32, 0.38, 0.022]} />
         <meshStandardMaterial color="#0e1018" roughness={0.4} metalness={0.3} />

@@ -721,3 +721,62 @@
   font-size: 0.72rem;
   padding: 0.2rem 0.55rem;
 }
+
+/* ─── Sound toggle ────────────────────────────────────────────────────────── */
+
+.sound-toggle {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.85rem 0.5rem 0.65rem;
+  background: rgba(10, 12, 22, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.sound-toggle:hover {
+  border-color: rgba(240, 115, 64, 0.4);
+  color: var(--text);
+  box-shadow: 0 4px 20px rgba(240, 115, 64, 0.15);
+}
+
+.sound-toggle-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.sound-toggle-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* When sound is playing, tint the icon accent orange */
+.sound-toggle:has(.sound-toggle-label:not(:empty)) svg {
+  transition: color 0.22s ease;
+}
+
+@media (max-width: 480px) {
+  .sound-toggle {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.5rem 0.7rem;
+  }
+  .sound-toggle-label {
+    display: none;
+  }
+}

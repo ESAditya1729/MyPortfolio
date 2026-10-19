@@ -136,3 +136,14 @@ export const sections = [
     links: { github: 'https://github.com/ESAditya1729', linkedin: '#' },
   },
 ]
+
+// Scroll offset (0..1) where a given section's page range begins — used by
+// 3D hotspots to jump the scroll position straight to a section.
+export function getSectionOffset(id) {
+  let pagesBefore = 0
+  for (const section of sections) {
+    if (section.id === id) break
+    pagesBefore += section.scrollPages ?? 1
+  }
+  return pagesBefore / TOTAL_PAGES
+}
