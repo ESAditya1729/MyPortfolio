@@ -25,6 +25,15 @@ function LinkedInIcon() {
   )
 }
 
+function DownloadIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+      <path d="M12 3v12m0 0 4-4m-4 4-4-4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 function PinIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
@@ -45,6 +54,16 @@ export default function Contact({ data, index, total, sections }) {
           <MailIcon />
           {data.email}
         </a>
+        {data.resumeUrl && (
+          <a
+            className="resume-download-btn"
+            href={data.resumeUrl}
+            download="Aditya_Mukherjee_Resume.pdf"
+          >
+            <DownloadIcon />
+            Download Resume
+          </a>
+        )}
         <div className="contact-links">
           <a href={data.links.github} className="github" aria-label="GitHub">
             <GitHubIcon />
